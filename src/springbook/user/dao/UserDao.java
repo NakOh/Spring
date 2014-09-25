@@ -12,7 +12,7 @@ import java.sql.SQLException;
 
 import springbook.user.domain.User;
 
-public class UserDao {
+public abstract class UserDao {
 	public void add(User user) throws ClassNotFoundException, SQLException{
 		Class.forName("com.mysql.jdbc.Driver");
 		Connection c = getConnection();
@@ -53,10 +53,5 @@ public class UserDao {
 		return user;
 	}
 	
-	private Connection getConnection() throws ClassNotFoundException, SQLException{
-		Class.forName("com.mysql.jdbc.Driver");
-		Connection c = DriverManager.getConnection("jdbc:mysq://localhost/springbook", "root", "autoset");
-		return c;
-		
-	}
+	public abstract Connection getConnection() throws ClassNotFoundException, SQLException;
 }
