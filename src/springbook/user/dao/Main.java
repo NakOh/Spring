@@ -6,7 +6,8 @@ import springbook.user.domain.User;
 
 public class Main {
 	public static void main(String[] args) throws ClassNotFoundException, SQLException{
-		UserDao dao= new UserDao();
+		ConnectionMaker connectionMaker = new DConnectionMaker();
+		UserDao dao= new UserDao(connectionMaker);
 		
 		User user = new User();
 		user.setId("whiteship");
