@@ -18,8 +18,13 @@ import springbook.user.domain.User;
 public class UserDao {
 	private DataSource dataSource;
 	
+<<<<<<< HEAD
 	public void setDataSource(DataSource dataSource){
 		this.dataSource = dataSource;
+=======
+	public UserDao(ConnectionMaker connectionMaker){
+		this.connectionMaker = connectionMaker;
+>>>>>>> parent of 252d95b... XML도�
 	}
 	
 	public void add(User user) throws ClassNotFoundException, SQLException{
