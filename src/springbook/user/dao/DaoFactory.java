@@ -10,14 +10,10 @@ import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 public class DaoFactory {
 	@Bean
 	public UserDao userDao(){
-<<<<<<< HEAD:src/springbook/user/dao/CountingDaoFactory.java
 		UserDao userDao = new UserDao();
 		userDao.setDataSource(dataSource());
 		return userDao;
 		
-=======
-		return new UserDao(connectionMaker());
->>>>>>> parent of 252d95b... XML도�:src/springbook/user/dao/DaoFactory.java
 	}
 	
 
