@@ -6,7 +6,12 @@
     http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
     
     <bean id = "dataSource" 
-        class = "org.springframework.jdbc.datasource.SimpleDriverDataSource" />    	
+        class = "org.springframework.jdbc.datasource.SimpleDriverDataSource" >
+        <property name="driverClass" value ="com.mysql.jdbc.Driver" />
+        <property name="url" value ="jdbc:mysql://localhost/springbook" />
+        <property name="username" value="root" />
+        <property name="password" value="autoset" />
+        </bean>    	
     
     	    
     <bean id ="userDao" class="springbook.user.dao.UserDao">
