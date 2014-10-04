@@ -14,9 +14,10 @@ import org.springframework.test.context.ContextConfiguration;
 import static org.junit.Assert.assertThat;
 import static org.hamcrest.CoreMatchers.is;
 import springbook.user.domain.User;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-@RunWith(SpringJunit4ClassRunner.class)
-@ContextConfiguration(locations="springbook/user/dao/applicationContext.xml")
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations="/applicationContext.xml")
 public class UserDaoTest {
 	@Autowired
 	private ApplicationContext context;
@@ -27,7 +28,6 @@ public class UserDaoTest {
 	
 	@Before
 	public void setUp(){
-		ApplicationContext context = new GenericXmlApplicationContext("springbook/user/dao/applicationContext.xml");
 		this.dao=context.getBean("userDao", UserDao.class);
 		this.user1 = new User("gyumee", "박성철", "springno1");
 		this.user2 = new User("leegw700", "이길원" , "springno2");
