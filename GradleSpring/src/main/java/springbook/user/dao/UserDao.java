@@ -19,21 +19,25 @@ public class UserDao {
 
 	}
 
-	public void add(User user) throws ClassNotFoundException, SQLException {
-		Class.forName("com.mysql.jdbc.Driver");
-		Connection c = dataSource.getConnection();
+	public void add(final User user) throws ClassNotFoundException,
+			SQLException {
+		class AddStatement implements StatementStrategy {
 
-		PreparedStatement ps = c
-				.prepareStatement("insert into users(id, name, password) values(?,?,?)");
-		ps.setString(1, user.getId());
-		ps.setString(2, user.getName());
-		ps.setString(3, user.getPassword());
+			@Override
+			public PreparedStatement makePreparedStatement(Connection c)
+					throws SQLException {
+				PreparedStatement ps = c
+						.prepareStatement("insert into users(id, name, password) values(?,?,?)");
+				ps.setString(1, user.getId());
+				ps.setString(2, user.getName());
+				ps.setString(3, user.getPassword());
 
-		ps.executeUpdate();
+				return ps;
+			}
 
-		ps.close();
-		c.close();
-
+		}
+		StatementStrategy st = new AddStatement();
+		jdbcContextWithStatementStrategy(st);
 	}
 
 	public User get(String id) throws ClassNotFoundException, SQLException {
@@ -64,11 +68,17 @@ public class UserDao {
 	}
 
 	public void deleteAll() throws SQLException {
+		StatementStrategy st = new DeleteAllStatement();
+		jdbcContextWithStatementStrategy(st);
+	}
+
+	public void jdbcContextWithStatementStrategy(StatementStrategy stmt)
+			throws SQLException {
 		Connection c = null;
 		PreparedStatement ps = null;
 		try {
 			c = dataSource.getConnection();
-			ps = c.prepareStatement("delete from users");
+			ps = stmt.makePreparedStatement(c);
 			ps.executeUpdate();
 		} catch (SQLException e) {
 			throw e;
@@ -89,19 +99,43 @@ public class UserDao {
 	}
 
 	public int getCount() throws SQLException {
-		Connection c = dataSource.getConnection();
+		// Connection c = dataSource.getConnection();
+		Connection c = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
 
-		PreparedStatement ps = c.prepareStatement("select count(*) from users");
+		try {
+			c = dataSource.getConnection();
+			ps = c.prepareStatement("select count(*) from users");
+			rs = ps.executeQuery();
+			rs.next();
+			return rs.getInt(1);
+		} catch (SQLException e) {
+			throw e;
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
 
-		ResultSet rs = ps.executeQuery();
-		rs.next();
-		int count = rs.getInt(1);
+				}
+			}
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
 
-		rs.close();
-		ps.close();
-		c.close();
+				}
+			}
+			if (c != null) {
+				try {
+					c.close();
+				} catch (SQLException e) {
 
-		return count;
+				}
+
+			}
+		}
 	}
 
 }
