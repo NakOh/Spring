@@ -13,7 +13,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -120,11 +119,30 @@ public class UserDaoTest {
 		dao.get("unkown_id");
 	}
 
-	@Test(expected = DataAccessException.class)
+	@Test(expected = DuplicateUserIdException.class)
 	public void dupliciateKey() {
 		dao.deleteAll();
 		dao.add(user1);
 		dao.add(user1);
+	}
+
+	@Test
+	public void update() {
+		dao.deleteAll();
+		dao.add(user1);
+		dao.add(user2);
+		user1.setName("오민규");
+		user1.setPassword("springno6");
+		user1.setLevel(Level.GOLD);
+		user1.setLogin(1000);
+		user1.setRecommend(999);
+		dao.update(user1);
+
+		User user1update = dao.get(user1.getId());
+		checkSameUser(user1, user1update);
+		User user2same = dao.get(user2.getId());
+		checkSameUser(user2, user2same);
+
 	}
 
 }
