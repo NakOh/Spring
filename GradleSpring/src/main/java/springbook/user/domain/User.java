@@ -119,4 +119,13 @@ public class User {
 		this.password = password;
 	}
 
+	public void upgradeLevel() {
+		Level nextLevel = this.level.nextLevel();
+		if (nextLevel == null) {
+			throw new IllegalStateException(this.level.nextLevel()
+					+ "은 업그레이드가 불가합니다");
+		} else {
+			this.level = nextLevel;
+		}
+	}
 }
