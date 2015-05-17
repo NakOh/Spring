@@ -21,7 +21,7 @@ public class UserService {
 		this.userLevelUpgradePolicy = userLevelUpgradePolicy;
 	}
 
-	public void upgradeLevels() {
+	protected void upgradeLevels() {
 		List<User> users = userDao.getAll();
 		for (User user : users) {
 			if (userLevelUpgradePolicy.canUpgradeLevel(user)) {

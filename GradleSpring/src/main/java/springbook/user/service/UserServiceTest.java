@@ -3,6 +3,7 @@ package springbook.user.service;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 import static springbook.user.service.UserService.MIN_LOGCOUNT_FOR_SILVER;
 import static springbook.user.service.UserService.MIN_RECCOMEND_FOR_GOLD;
 
@@ -75,6 +76,24 @@ public class UserServiceTest {
 
 	}
 
+	@Test
+	public void upgradeAllOrNothing() {
+		UserService testUserService = new TestUserService(users.get(3).getId());
+		testUserService.setUserDao(this.userService.userDao);
+		this.userService.userDao.deleteAll();
+		for (User user : users)
+			this.userService.userDao.add(user);
+
+		try {
+			testUserService.upgradeLevels();
+			fail("TestUserServiceException expected");
+		} catch (TestUserServiceException e) {
+
+		}
+
+		checkLevel(users.get(1), false);
+	}
+
 	private void checkLevel(User user, boolean upgraded) {
 		User userUpdate = userService.userDao.get(user.getId());
 		if (upgraded) {
@@ -82,5 +101,23 @@ public class UserServiceTest {
 		} else {
 			assertThat(userUpdate.getLevel(), is(user.getLevel()));
 		}
+	}
+
+	static class TestUserService extends UserService {
+		private String id;
+
+		private TestUserService(String id) {
+			this.id = id;
+		}
+
+		protected void upgradeLevel(User user) {
+			if (user.getId().equals(this.id))
+				throw new TestUserServiceException();
+			super.userLevelUpgradePolicy.upgradeLevel(user);
+		}
+	}
+
+	static class TestUserServiceException extends RuntimeException {
+
 	}
 }
